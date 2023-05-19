@@ -25,8 +25,9 @@ SECRET_KEY = 'django-insecure-gpr8l=-!%&ha8#tkc29kgblkm#i_4sp5wv*n&7zb869657xh_u
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-ALLOWED_HOSTS = []
+
 
 
 # Application definition
@@ -126,3 +127,17 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
