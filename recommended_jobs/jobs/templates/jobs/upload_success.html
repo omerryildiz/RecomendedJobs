@@ -1,0 +1,10 @@
+<h1>Dosya Başarıyla Yüklendi!</h1>
+
+{% for document in documents %}
+    <h2>{{ document.description }}</h2>
+    <p>Yüklenme Tarihi: {{ document.uploaded_at }}</p>
+    <p>İçerik:</p>
+    <pre>{{ document.read_content }}</pre>
+{% empty %}
+    <p>Henüz dosya yüklenmemiş.</p>
+{% endfor %}
