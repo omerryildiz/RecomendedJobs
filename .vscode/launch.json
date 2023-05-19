@@ -1,16 +1,26 @@
 {
     "version": "0.2.0",
     "configurations": [
+      
         
       {
         "name": "Python: Django",
         "type": "python",
         "request": "launch",
-        "program": "${workspaceFolder}/manage.py",
+        "program": "${workspaceFolder}/recommended_jobs/manage.py",
         "args": [
           "runserver"
         ],
         "django": true
+      },
+      {
+        "name": "jobs",
+        "python": "${command:python.interpreterPath}",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/recommended_jobs/manage.py",
+        "console": "internalConsole",
+        "args": ["runserver"]
       }
     ]
   }

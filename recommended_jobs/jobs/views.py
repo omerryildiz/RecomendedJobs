@@ -22,10 +22,8 @@ def upload_file(request):
 def process_file(request):
     uploaded_file = MyFile.objects.latest('id')  # En son yüklenen dosyayı alın
     file_path = uploaded_file.file.path
-    csv_file_path = os.path.join(settings.BASE_DIR, file_path)
-
-    # Dosyayı okuyun
-    df = pd.read_csv(csv_file_path, encoding="ISO-8859-9")
+    file_path_csv = os.path.join(settings.BASE_DIR, 'documents', 'processed_requirement.csv')
+    df = pd.read_csv(file_path_csv, encoding="ISO-8859-9")
     with open(file_path, 'r') as file:
         cv_text = file.read()
         
