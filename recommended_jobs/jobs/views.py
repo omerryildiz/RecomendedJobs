@@ -8,7 +8,12 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.neighbors import NearestNeighbors
 import os
 from django.conf import settings
-
+import PyPDF2
+import codecs
+import PyPDF2
+import textract
+import io
+import re
 def upload_file(request):
     if request.method == 'POST':
         form = MyFileForm(request.POST, request.FILES)
@@ -23,15 +28,30 @@ def process_file(request):
     uploaded_file = MyFile.objects.latest('id')  # En son yüklenen dosyayı alın
     file_path = uploaded_file.file.path
     file_path_csv = os.path.join(settings.BASE_DIR, 'documents', 'processed_requirement.csv')
+    if file_path.endswith('.txt'):
+        with codecs.open(file_path, 'r', encoding='utf-8') as file:
+            cv_text = file.read()
+    elif file_path.endswith('.pdf'):
+        with open(file_path, 'rb') as file:
+            pdf_reader = PyPDF2.PdfReader(file)
+            num_pages = len(pdf_reader.pages)
+
+            text = ''
+            for page_num in range(num_pages):
+                page = pdf_reader.pages[page_num]
+                text += page.extract_text ()
+        text = re.sub(r'[^\x00-\x7F]+', '', text)
+        #text = textract.process(text, method='tesseract', encoding='utf-8')
+        cv_text = text
+    else:
+        raise ValueError("Desteklenmeyen dosya formatı.")
+
     df = pd.read_csv(file_path_csv, encoding="ISO-8859-9")
-    with open(file_path, 'r') as file:
-        cv_text = file.read()
-        
     tfidf_vectorizer = TfidfVectorizer(stop_words="english")
     job_data_tfidf = tfidf_vectorizer.fit_transform(df["skill"])
     cv_tfidf = tfidf_vectorizer.transform([cv_text])
     cosine_similarities = cosine_similarity(cv_tfidf, job_data_tfidf).flatten()
-    
+
     def get_recommendation(top_indices, df_all, scores):
         recommendation = pd.DataFrame(columns=['JobID', 'title', 'description', 'skill', 'score'])
         count = 0
@@ -61,9 +81,9 @@ def process_file(request):
     top_indices = sorted(range(len(cosine_similarities)), key=lambda i: cosine_similarities[i], reverse=True)[:100]
     list_scores = [cosine_similarities[i] for i in top_indices]
     recommendations = get_recommendation(top_indices, df, list_scores)
+    
     return render(request, 'jobs/process_file.html', {
         'file_content': cv_text,
         'knn_recommendations': knn_recommendations,
         'recommendations': recommendations
     })
-   
