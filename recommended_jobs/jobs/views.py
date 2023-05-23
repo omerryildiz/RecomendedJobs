@@ -53,7 +53,7 @@ def process_file(request):
     cosine_similarities = cosine_similarity(cv_tfidf, job_data_tfidf).flatten()
 
     def get_recommendation(top_indices, df_all, scores):
-        recommendation = pd.DataFrame(columns=['JobID', 'title', 'description', 'skill', 'score'])
+        recommendation = pd.DataFrame(columns=['JobID', 'title', 'description', 'skill', 'score', 'link'])
         count = 0
         for i in top_indices:
             recommendation.at[count, 'JobID'] = df_all.index[i]
@@ -61,6 +61,7 @@ def process_file(request):
             recommendation.at[count, 'description'] = df_all['description'][i]
             recommendation.at[count, 'skill'] = df_all['skill'][i]
             recommendation.at[count, 'score'] = scores[count]
+            recommendation.at[count, 'link'] = df_all['link'][i]
             count += 1
         return recommendation
 
