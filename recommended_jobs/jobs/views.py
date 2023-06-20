@@ -93,14 +93,14 @@ def process_file(request):
     
     top_10_jobs.to_csv('documents/recommended_jobs.csv', index=False)
     file_path_csv_rec = 'documents/recommended_jobs.csv'
-    df = pd.read_csv(file_path_csv_rec, encoding="ISO-8859-9")
+    df = pd.read_csv(file_path_csv_rec, encoding="utf-8")
     df['skill'].fillna('unknown', inplace=True)
     df['label'].fillna('unknown', inplace=True)
 
-    columns = ['Title', 'Description', 'Skill', 'Link', 'Img_url', 'Label']
+    columns = ['title', 'description', 'skill', 'link', 'img_url', 'label']
     data = df[columns].values.tolist()
 
-    return render(request, 'csv_content.html', {'data': data})
+    return render(request, 'process_file.html', {'data': data})
 #     tsne = TSNE(n_components=2, random_state=0)
 #     X_2d = tsne.fit_transform(X.toarray())
     
